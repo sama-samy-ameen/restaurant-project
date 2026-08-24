@@ -2,34 +2,9 @@
 from bank import BankAccount
 account=BankAccount()
 account.deposit()
-class MenuItems:
-    def __init__(self, item_name, item_id, price, availability=True ):
-        self.item_name=item_name
-        self.item_id=item_id
-        self.price=price
-        self.availability=availability
+import MainFile
 
-class Order:
-    def __init__(self, table_number=None, order_id=100):
-        self.table_number=table_number
-        self.order_id=order_id
-        self.items=[]
-        self.status="Pending"
-        self.total_price=0
-
-#Global shared menu for testing/demonstration.
-
-global_menu=[
-    MenuItems("Pizza", 1, 250),
-    MenuItems("Pasta", 2, 210),
-    MenuItems("Burger", 3, 185),
-    MenuItems("Juice", 4, 40),
-    MenuItems("Soda", 5, 60),
-    MenuItems("Water", 6, 25)]
-
-global_orders=[]
-total_revenue=0
-#make table_number=None and order_id=100 inside order class
+#note make table_number=None and order_id=100 inside order class 
 class customer(Order):
     def __init__(self):
         #displaying the menu
