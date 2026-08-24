@@ -24,6 +24,7 @@ global_menu=[
     MenuItems("Water", 6, 25)]
 
 
+
 global_orders=[]
 total_revenue=0
 # import MainFile.py
@@ -40,9 +41,10 @@ class customer(Order):
             try: 
                 self.amount=int(input('How many items do you want? '))
                 self.order={}
-                if self.amount<=0 or self.amount>len(global_menu)
+                if self.amount<=0 or self.amount>len(global_menu):
+                    print('out of range, try again')
             except:
-                print('please enter a valid input')
+                print('please enter a valid number of items')
             for i in range(self.amount):
                 item=input("what will you order?  ")
                 #for i in global_menu:
@@ -60,7 +62,7 @@ class customer(Order):
                 try:
                     quant=int(input(f'How much {item} do you want ? '))
                 except:
-                    print('please enter a valid input')
+                    print('please enter a valid quantity')
                 self.order[item]=int(quant)
             confirmation=input(f'Are you sure you want to place this order {self.order} ? :')
             if 'yes' in confirmation.lower():
@@ -70,12 +72,13 @@ class customer(Order):
                     self.table_number=int(input('Enter your table number: '))
                     self.order_id+=1
                 except:
-                    print('please enter a valid input')
+                    print('please enter a valid table number')
                     #break
 
                 for key,value in self.order.items():
-                    if key==self.item_name:
-                        self.total_price += (self.price *value)
+                        for item in global_menu:
+                             if key.capitalize()==item.item_name:
+                                self.total_price += (item.price *value)
                 print('your order has been confirmed successfully!')
 
 
