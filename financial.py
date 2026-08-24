@@ -59,7 +59,7 @@ class FinancialManager:
 
     def calculate_net_profit(self, global_orders):
         """
-        Calculate net profit or loss.
+        Calculate net profit or loss .
         """
 
         revenue = self.calculate_revenue(global_orders)
@@ -94,7 +94,7 @@ class FinancialManager:
         if net_profit > 0:
             print("Result: Profit")
         elif net_profit < 0:
-            print("Result: Loss")
+            print("Result: Loss ")
         else:
             print("Result: Break-even")
 
