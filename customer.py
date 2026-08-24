@@ -1,3 +1,7 @@
+
+#import MainFile.py
+#from financial.py import generate_bill()
+#making table_number=None and order_id=100
 class MenuItems:
     def __init__(self, item_name, item_id, price, availability=True ):
         self.item_name=item_name
@@ -27,7 +31,7 @@ global_menu=[
 
 global_orders=[]
 total_revenue=0
-# import MainFile.py
+
 class customer(Order):
     def __init__(self):
         #displaying the menu
@@ -37,7 +41,7 @@ class customer(Order):
         super().__init__()
 
 
-    def Order(self):
+    def order(self):
         try:  # a general exception handling so that the program doesn't crash
             try: #taking the the overall amount of items , then taking each one in detail
 
@@ -81,24 +85,24 @@ class customer(Order):
             # confirming the order 
             confirmation=input(f'Are you sure you want to place this order {self.order} ? :')
             if 'yes' in confirmation.lower():
-                #adding the order of the customer to the list inside the Order class, so that the chef and the managers can have access to it
-                for key in self.order:
-                    self.items.append(key)
+                
                 try:  #more info of the customer order
                     self.table_number=int(input('Enter your table number: '))
                     self.order_id+=1  #so that the next order's id becomes different
+                    self.new_order = Order(self.table_number, self.order_id)
+                    global_orders.append(self.new_order)
                 except:
                     print('please enter a valid table number')
-                    
-                #calculating the price
-                for key,value in self.order.items():
-                        for item in global_menu:
-                            if key.capitalize()==item.item_name:
-                                print('match')
-                                self.total_price += (item.price *value)
+                
+                #connecting  customer's order with the global Order list, so that the manager and the chef can access them
+                for key, quantity in self.order.items():
+                    for i in global_menu:
+                        if key.capitalize() == i.item_name:
+                            for x in range(quantity):
+                                self.new_order.items.append(i)
                             
                 print('your order has been confirmed successfully!')
-                print(self.total_price)
+
 
 
             elif 'no' in confirmation.lower():
@@ -106,22 +110,49 @@ class customer(Order):
         
         except:
             print('sorry, an error occurred , please resubmit your order ')
+
+
+
+    def generate_bill(self, order, discount=0):
+        """
+        Calculate bill after discount.
+        """
+
+        subtotal = 0
+
+        # Calculate the order subtotal.
+        for item in order.items:
+            subtotal += item.price
+
+        # Validate the discount.
+        if discount < 0:
+            discount = 0
+
+        if discount > subtotal:
+            discount = subtotal
+
+        order.total_price = subtotal - discount
+
+        return order.total_price
     
-        
+
+    #taking the final value of the bill from the manager class after applying discounts 'if available'
+    def show_bill(self):
+        print('\n','        Bill    ','\n')
+        print('items*quantity:','    ','price')
+        for key,value in self.order.items():
+            for item in global_menu:
+                if key.capitalize() == item.item_name:
+                    print(key,'(',value,')','           ',value*item.price)
+        print('\nTotal: ',self.generate_bill(self.new_order))
 
 
-        
+    
 
-      #errors:  error handling 
-        
-
-
-
-
-
-        
-    #def Budget(self):
-        #pass 
+    
+    
+    
+    
     #def order_status(self):
         #pass
     #def add item(self)
@@ -130,4 +161,5 @@ class customer(Order):
     #def review(self):
        # pass #if low send to the manager
 c1=customer()
-c1.Order()
+c1.order()
+c1.show_bill()
