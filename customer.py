@@ -1,40 +1,13 @@
 
-#import MainFile.py
-#from financial.py import generate_bill()
-#making table_number=None and order_id=100
-class MenuItems:
-    def __init__(self, item_name, item_id, price, availability=True ):
-        self.item_name=item_name
-        self.item_id=item_id
-        self.price=price
-        self.availability=availability
-        
+import MainFile
+from bank import BankAccount
+account=BankAccount()
 
-class Order:
-    def __init__(self, table_number=None, order_id=100):
-        self.table_number=table_number
-        self.order_id=order_id
-        self.items=[]
-        self.status="Pending"
-        self.total_price=0
-
-#Global shared menu for testing/demonstration.
-global_menu=[
-    MenuItems("Pizza", 1, 250),
-    MenuItems("Pasta", 2, 210),
-    MenuItems("Burger", 3, 185),
-    MenuItems("Juice", 4, 40),
-    MenuItems("Soda", 5, 60),
-    MenuItems("Water", 6, 25)]
-
-
-
-global_orders=[]
-total_revenue=0
-
+#make table_number=None and order_id=100 inside order class
 class customer(Order):
     def __init__(self):
         #displaying the menu
+        self.account=account
         print(' welcome to our restaurant,\n','choose the items you want from our menu:')
         for i in global_menu:
             print( '    ','(',i.item_id,')',i.item_name,':',i.price,'EGP')
@@ -113,30 +86,32 @@ class customer(Order):
 
 
 
-    def generate_bill(self, order, discount=0):
-        """
-        Calculate bill after discount.
-        """
-
-        subtotal = 0
-
-        # Calculate the order subtotal.
-        for item in order.items:
-            subtotal += item.price
-
-        # Validate the discount.
-        if discount < 0:
-            discount = 0
-
-        if discount > subtotal:
-            discount = subtotal
-
-        order.total_price = subtotal - discount
-
-        return order.total_price
     
-
     #taking the final value of the bill from the manager class after applying discounts 'if available'
+    # NOTE_THAT generate_bill function is taken from the financial manager class
+
+    def generate_bill(self, order, discount=0):# <-- function from FinancialManager class
+            """
+            Calculate bill after discount.
+            """
+    
+            subtotal = 0
+    
+            # Calculate the order subtotal.
+            for item in order.items:
+                subtotal += item.price
+    
+            # Validate the discount.
+            if discount < 0:
+                discount = 0
+    
+            if discount > subtotal:
+                discount = subtotal
+    
+            order.total_price = subtotal - discount
+    
+            return order.total_price
+    
     def show_bill(self):
         print('\n','        Bill    ','\n')
         print('items*quantity:','    ','price')
@@ -144,22 +119,33 @@ class customer(Order):
             for item in global_menu:
                 if key.capitalize() == item.item_name:
                     print(key,'(',value,')','           ',value*item.price)
-        print('\nTotal: ',self.generate_bill(self.new_order))
+        total_bill=self.generate_bill(self.new_order) #storing the total value in a variable will be useful for the pay_credit method
+        print('\nTotal: ',total_bill)
 
 
-    
+    def review(self):
+        rev=int(input('On a scale of 1 to 5, how would you rate your experience at our restaurant? '))
+        match rev:
+            case 1 |2|3 :
+                complaint=input('write your complaint: ')
+            case 4 | 5:
+                print('Thank you for your positive feedback! We’re glad you enjoyed your experience.')
+            case _:
+                print('out of range :)')
+    def pay_credit(self):
+        
 
     
-    
-    
-    
-    #def order_status(self):
-        #pass
-    #def add item(self)
-    #def history(self):
-        #pass
-    #def review(self):
-       # pass #if low send to the manager
+
+
+
+
+
+       
+
+#testing
 c1=customer()
 c1.order()
 c1.show_bill()
+c1.review()
+
