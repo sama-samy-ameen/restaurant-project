@@ -2,7 +2,9 @@
 from bank import BankAccount
 account=BankAccount()
 account.deposit()
-import MainFile
+from MainFile import Order, global_menu, global_orders
+from financial import FinancialManager
+manager=FinancialManager()
 
 #note make table_number=None and order_id=100 inside order class 
 class customer(Order):
@@ -11,7 +13,8 @@ class customer(Order):
         print(' welcome to our restaurant,\n','choose the items you want from our menu:')
         for i in global_menu:
             print( '    ','(',i.item_id,')',i.item_name,':',i.price,'EGP')
-        super().__init__()
+        super().__init__(None,100)   
+        #table number and order id are set correctly later in the ordering process
 
 
     def order(self):
@@ -92,27 +95,6 @@ class customer(Order):
     #taking the final value of the bill from the manager class after applying discounts 'if available'
     # NOTE_THAT generate_bill function is taken from the financial manager class
 
-    def generate_bill(self, order, discount=0):# <-- function from FinancialManager class
-            """
-            Calculate bill after discount.
-            """
-    
-            subtotal = 0
-    
-            # Calculate the order subtotal.
-            for item in order.items:
-                subtotal += item.price
-    
-            # Validate the discount.
-            if discount < 0:
-                discount = 0
-    
-            if discount > subtotal:
-                discount = subtotal
-    
-            order.total_price = subtotal - discount
-    
-            return order.total_price
     
     def show_bill(self):
         print('\n','        Bill    ','\n')
@@ -121,7 +103,7 @@ class customer(Order):
             for item in global_menu:
                 if key.capitalize() == item.item_name:
                     print(key,'(',value,')','           ',value*item.price)
-        self.total_bill=self.generate_bill(self.new_order) 
+        self.total_bill=manager.generate_bill(self.new_order) 
         #storing the total value in a variable will be useful for the pay_credit method
         print('\nTotal: ',self.total_bill)
 
