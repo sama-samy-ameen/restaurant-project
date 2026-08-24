@@ -1,13 +1,38 @@
 
-import MainFile
 from bank import BankAccount
 account=BankAccount()
+account.deposit()
+class MenuItems:
+    def __init__(self, item_name, item_id, price, availability=True ):
+        self.item_name=item_name
+        self.item_id=item_id
+        self.price=price
+        self.availability=availability
 
+class Order:
+    def __init__(self, table_number=None, order_id=100):
+        self.table_number=table_number
+        self.order_id=order_id
+        self.items=[]
+        self.status="Pending"
+        self.total_price=0
+
+#Global shared menu for testing/demonstration.
+
+global_menu=[
+    MenuItems("Pizza", 1, 250),
+    MenuItems("Pasta", 2, 210),
+    MenuItems("Burger", 3, 185),
+    MenuItems("Juice", 4, 40),
+    MenuItems("Soda", 5, 60),
+    MenuItems("Water", 6, 25)]
+
+global_orders=[]
+total_revenue=0
 #make table_number=None and order_id=100 inside order class
 class customer(Order):
     def __init__(self):
         #displaying the menu
-        self.account=account
         print(' welcome to our restaurant,\n','choose the items you want from our menu:')
         for i in global_menu:
             print( '    ','(',i.item_id,')',i.item_name,':',i.price,'EGP')
@@ -17,7 +42,7 @@ class customer(Order):
     def order(self):
         try:  # a general exception handling so that the program doesn't crash
             try: #taking the the overall amount of items , then taking each one in detail
-
+                self.account=account
                 self.amount=int(input('How many items do you want? '))
                 self.order={}
                 # amount condition
@@ -80,6 +105,8 @@ class customer(Order):
 
             elif 'no' in confirmation.lower():
                 print('please place your order again')
+            else:
+                print('unidentified answer, resubmit your order')
         
         except:
             print('sorry, an error occurred , please resubmit your order ')
@@ -119,8 +146,9 @@ class customer(Order):
             for item in global_menu:
                 if key.capitalize() == item.item_name:
                     print(key,'(',value,')','           ',value*item.price)
-        total_bill=self.generate_bill(self.new_order) #storing the total value in a variable will be useful for the pay_credit method
-        print('\nTotal: ',total_bill)
+        self.total_bill=self.generate_bill(self.new_order) 
+        #storing the total value in a variable will be useful for the pay_credit method
+        print('\nTotal: ',self.total_bill)
 
 
     def review(self):
@@ -132,8 +160,13 @@ class customer(Order):
                 print('Thank you for your positive feedback! We’re glad you enjoyed your experience.')
             case _:
                 print('out of range :)')
+
+    #connected with the bank_account
     def pay_credit(self):
-        
+        if account.balance < self.total_bill :
+            print('you dont have enough money')
+        else:
+            account.withdraw()
 
     
 
@@ -148,4 +181,5 @@ c1=customer()
 c1.order()
 c1.show_bill()
 c1.review()
+c1.pay_credit()
 
