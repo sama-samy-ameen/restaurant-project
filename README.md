@@ -12,6 +12,33 @@ main manager (Nicole)------financial manager (Menna)-------chef (Mariam)------cu
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
+Main / Common code:
+The ‘MainFile.py’ module defines the foundational classes and globel lists used across all staff branches.
+
+1. “MenuItems” : 
+    It represents an item which is available on the restaurant menu. It recieves attributes to define any menu item, they are as follows:
+    item_id, item_name, price, availability.
+2. “ Order”:
+    It represents a customer’s order placed at a table. It recieves the following attributes:  order_id, table_number, item list, status , total_price.
+3. Global data structures: 
+    global_ menu which is a list holding all registered MenuItems objects and global_orders which is a shared system queue holding all active and completed orders.
+
+As previously mentioned, the purpose of these shared classes are to establish a commonness between every staff class and allow the classes to work together well without overlapping eachother.
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Chef Class:
+<> The chef class handles kitchen operations within the system. It acts as the interface for kitchen staff to track pending orders, update order progress and change the menu when an item is out of stock.
+
+<> It consists of 3 methods: 
+
+1. View pending orders:
+    It displays all active orders in the kitchen queue that have not been completed yet as well as printing an error message if there are no active orders.
+2. Update order status:
+    This method takes a new status and updates the order status in the orders list and outputs a decriptive confirmation.
+3. Change item availability:
+    Allows the kitchen staff to mark menu items either as available or out of stock and updates the global menu list.
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Customer Branch:
