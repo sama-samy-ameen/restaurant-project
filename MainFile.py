@@ -1,3 +1,4 @@
+#Standard shared classes.
 class MenuItems:
     def __init__(self, item_name, item_id, price, availability=True ):
         self.item_name=item_name
@@ -26,6 +27,9 @@ global_menu=[
 global_orders=[]
 total_revenue=0
 
-
-
-
+#---Test---
+if __name__=="__main__":
+    item1=global_menu[0]
+    print(f"Item created: {item1.item_name}, Price: {item1.price} EGP")
+    test_order=Order(5, 102)
+    print(f"Order status: {test_order.status} for Table number: {test_order.table_number}")
