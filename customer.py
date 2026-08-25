@@ -1,8 +1,9 @@
-
+#for the pay_pill fucntion below:
 from bank import BankAccount
 account=BankAccount()
 account.deposit()
 #from MainFile import Order, global_menu, global_orders
+#for the show_bill function below:
 from financial import FinancialManager
 manager=FinancialManager()
 
@@ -65,6 +66,7 @@ class customer(Order):
                 try:  #more info of the customer order
                     self.table_number=int(input('Enter your table number: '))
                     self.order_id+=1  #so that the next order's id becomes different
+                    #connecting the customer's order with the Order class
                     self.new_order = Order(self.table_number, self.order_id)
                     global_orders.append(self.new_order)
                 except:
