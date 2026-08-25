@@ -41,5 +41,38 @@ If the rating is <= 3, the user is allowed to input their complaint due to the l
 4. Pay credit:
 An optional feature, which is an attempt to connect a bank system with a restaurant system by withdrawing the bill amount from the user's bank account.
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Financial Manager Branch:
+
+
+<> The FinancialManager class handles the restaurant's basic financial operations, including bill generation, expense tracking, revenue calculation, profit calculation, and financial reporting.
+
+<> Features :
+
+- Bill Generation: Calculates an order's subtotal from its items and applies a validated discount.
+
+- Discount Validation: Prevents negative discounts and ensures the discount does not exceed the order subtotal.
+
+- Expense Tracking: Records restaurant expenses and amount while rejecting negative amounts.
+
+- Revenue Calculation: Calculates total revenue from completed orders.
+
+- Profit Calculation: Calculates net profit or loss by subtracting total expenses from total revenue.
+
+- Financial Reporting: Displays total revenue, total expenses, net profit, and whether the restaurant made a profit, a loss, or broke even.
+
+
+<> Main Functions :
+
+-generate_bill()
+-calculate_revenue()
+-add_expense()
+-calculate_net_profit()
+-report()
+
+
 
 
