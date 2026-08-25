@@ -7,7 +7,7 @@ account.deposit()
 from financial import FinancialManager
 manager=FinancialManager()
 
-#note make table_number=None and order_id=100 inside order class 
+
 class customer(Order):
     def __init__(self):
         #displaying the menu
