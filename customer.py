@@ -2,7 +2,7 @@
 from bank import BankAccount
 account=BankAccount()
 account.deposit()
-from MainFile import Order, global_menu, global_orders
+#from MainFile import Order, global_menu, global_orders
 from financial import FinancialManager
 manager=FinancialManager()
 
