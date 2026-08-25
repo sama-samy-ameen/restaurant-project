@@ -8,10 +8,7 @@ The system is divided into four main classes: Customer, Chef, Financial Manager,
 
 Team Members:
 
-Nicole : Main Manager branch
-Menna : Financial Manager branch
-Mariam : Chef branch
-Sama : Customer branch
+main manager (Nicole)------financial manager (Menna)-------chef (Mariam)------customer (sama)
 
 Customer Branch:
 
