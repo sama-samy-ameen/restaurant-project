@@ -1,4 +1,9 @@
 #Standard shared classes.
+import bank
+import chef
+import customer
+import GeneralManager
+import fincancial
 class MenuItems:
     def __init__(self, item_name, item_id, price, availability=True ):
         self.item_name=item_name
