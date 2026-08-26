@@ -161,4 +161,8 @@ if __name__ == "__main__":
     manager = FinancialManager()
     global_orders = []
 
+<<<<<<< HEAD
     financial_menu(manager, global_orders)
+=======
+    financial_menu(manager, global_orders)
+>>>>>>> 1a4d4acc9ec38cb49b77512b536ae3e1bc840e39
