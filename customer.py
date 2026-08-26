@@ -109,14 +109,17 @@ class customer(Order):
 
 
     def review(self):
-        rev=int(input('On a scale of 1 to 5, how would you rate your experience at our restaurant? '))
-        match rev:
-            case 1 |2|3 :
-                complaint=input('write your complaint: ')
-            case 4 | 5:
-                print('Thank you for your positive feedback! We’re glad you enjoyed your experience.')
-            case _:
-                print('out of range :)')
+        try:
+            rev=int(input('On a scale of 1 to 5, how would you rate your experience at our restaurant? '))
+            match rev:
+                case 1 |2|3 :
+                    complaint=input('write your complaint: ')
+                case 4 | 5:
+                    print('Thank you for your positive feedback! We’re glad you enjoyed your experience.')
+                case _:
+                    print('out of range :)')
+        except:
+            print('Enter a valid input')
 
     #connected with the bank_account
     def pay_credit(self):
