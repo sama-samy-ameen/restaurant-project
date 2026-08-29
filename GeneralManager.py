@@ -1,3 +1,4 @@
+from RandomIDs import generate_4_digit_id
 class GeneralManager:
     def __init__(self, chefs, waiters, cashiers, schedules):
         self.chefs = chefs
@@ -9,7 +10,7 @@ class GeneralManager:
         self.schedules = schedules
     def get_employees(self, position):
         position = position.lower()
-        if position == "chef":
+        if position in ["chef","head chef"]:
             return self.chefs
         elif position in ["waiter", "waitress", "head waiter"]:
             return self.waiters
@@ -29,14 +30,11 @@ class GeneralManager:
                 return employee
         return None
     
-    def add_employee(self, name, employee_id, position, salary):
+    def add_employee(self, name, position, salary):
         position = position.lower()
         employees = self.get_employees(position)
         if employees is None:
             print("Invalid position")
-            return
-        if self.get_employee_by_id(employee_id) is not None:
-            print("Employee ID already exists")
             return
         if position == "chef":
             key = self.next_chef
@@ -47,15 +45,9 @@ class GeneralManager:
         else:
             key = self.next_cashier
             self.next_cashier += 1
-        employees[key] = {
-            "name": name,
-            "id": str(employee_id),
-            "position": position,
-            "salary": salary
-        }
-
+        employees[key] = {"name": name,"id": str(generate_4_digit_id()),
+            "position": position,"salary": salary}
         print("Added successfully")
-
     def remove_employee(self, employee_id, position):
         position = position.lower()
         employees = self.get_employees(position)
@@ -67,7 +59,6 @@ class GeneralManager:
             if employee["id"] == employee_id:
                 self.remove_from_schedule(employee_id)
                 del employees[key]
-
                 print("Removed successfully")
                 return
         print("Can't find ID")
@@ -249,54 +240,76 @@ while True:
     try:
         choice = int(input("Enter your choice: "))
     except ValueError:
-        print("Please enter a number")
+        print("Please enter a number:")
         continue
     if choice == 1:
-        name = input("Enter the name: ")
-        employee_id = input("Enter ID: ")
-        position = input("Enter position: ").lower()
+        try:
+            name = input("Enter the name: ")
+        except ValueError:
+            print("Please enter characters:")
+            continue
+        try:
+            position = input("Enter position: ").lower()
+        except ValueError:
+            print("Please enter characters:")
+            continue
         try:
             salary = int(input("Enter the salary: "))
         except ValueError:
             print("Salary must be a number")
             continue
-        employee.add_employee(
-            name,
-            employee_id,
-            position,
-            salary
-        )
+        employee.add_employee(name,position,salary)
     elif choice == 2:
-        employee_id = input("Enter ID: ")
-        position = input("Enter position: ").lower()
-        employee.remove_employee(
-            employee_id,
-            position
-        )
+        try:
+            employee_id = input("Enter ID: ")
+        except ValueError:
+            print("Please enter a valid ID:")
+            continue
+        try:
+            position = input("Enter position: ").lower()
+        except ValueError:
+            print("Please enter characters:")
+            continue
+        employee.remove_employee(employee_id,position)
     elif choice == 3:
-        name = input("Enter the name: ")
-        employee_id = input("Enter ID: ")
-        position = input("Enter position: ").lower()
+        try:
+            name = input("Enter the name: ")
+        except ValueError:
+            print("Please enter characters:")
+            continue
+        try:
+            employee_id = input("Enter ID: ")
+        except ValueError:
+            print("Please enter a valid ID:")
+            continue
+        try:
+            position = input("Enter position: ").lower()
+        except ValueError:
+            print("Please enter characters:")
+            continue
         try:
             salary = int(input("Enter the salary: "))
         except ValueError:
             print("Salary must be a number")
             continue
-        employee.update_employee(
-            name,
-            employee_id,
-            position,
-            salary
-        )
+        employee.update_employee(name,employee_id,position,salary)
     elif choice == 4:
-        employee_id = input("Enter ID: ")
-        day = input("Enter day: ")
-        shift = input("Enter shift (morning/evening): ")
-        employee.schedule_employee(
-            employee_id,
-            day,
-            shift
-        )
+        try:
+            employee_id = input("Enter ID: ")
+        except ValueError:
+            print("Please enter a valid ID:")
+            continue
+        try:
+            day = input("Enter day: ")
+        except ValueError:
+            print("Please enter a valid day:")
+            continue
+        try:
+            shift = input("Enter shift (morning/evening): ")
+        except ValueError:
+            print("Please enter a valid shift:")
+            continue
+        employee.schedule_employee(employee_id,day,shift)
     elif choice == 5:
         employee.display_employee()
     elif choice == 6:
