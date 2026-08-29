@@ -1,10 +1,12 @@
 
-from MainFile import Order, global_menu, global_orders ,MenuItems
+from restaurant_common_data import Order,global_menu,global_orders
 #for the show_bill function below:
 from financial import FinancialManager
 manager=FinancialManager() #you must leave this one
-from bank import BankAccount
+from bank import BankAccount,info  
 import random
+
+
 class Customer(Order):
     def __init__(self):
         
@@ -12,59 +14,67 @@ class Customer(Order):
         print(' Welcome to our restaurant,\n','choose the items you want from our menu and place your order:')
         for i in global_menu:
             print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
-        self.validation=None
-        self.did_c_order=None
-        self.dept=None
+        self.did_c_order=None    #checking if the customer made an order or not, because some features cannot be used unless an order is made, such as pay bill ! 
+        self.dept=None  #paid the order?
         self.order={}
-        self.existing_table=False
-        super().__init__(None,random.randint(0,7000)) 
-        self.order_meth()
-        #table number and order id are set correctly later in the ordering process
+        self.existing_table=False  #so if the customer added an item , it doesn't ask him again for the table number
+        super().__init__(None,random.randint(1,7000)) 
+        self.order_method()
+        #table number is set correctly later in the ordering process
 
 
-    def order_meth(self): #order method
+    def order_method(self): 
         
-        try:
+        
+    
             self.did_c_order=True
             check=True
-            while check:
+            while check: #making the order with the id of the items
                 try: 
                     self.food=int(input('\nEnter the id of the item you want: '))
                     if self.food >0 and self.food <= len(global_menu):
-                        valid=True
-                        while valid:
-                                for i in global_menu:
-                                    if self.food ==i.item_id:
-                                        self.food_name=i.item_name
-                                        check=False
-                                        valid=False
-                                        break
-                                                    
-    
+                        check1=True #connecting the item id with the item name 
+                        while check1:
+                            for i in global_menu:
+                                if self.food ==i.item_id:
+                                    if i.availability==True:
+                                          check1=False
+                                          check=False
+                                          break
+                                    else:
+                                         print('This item is currently unavailable')
+                                         check1=False
+                                         break
+                    else:
+                         print('\nplease enter a valid id')
                 except:
                     print('\nPlease enter a valid id')
-                
 
-        
-            check=True
+            check=True #connecting the item id with the item name 
             while check:
+                        for i in global_menu:
+                            if self.food ==i.item_id:
+                                self.food_name=i.item_name
+                                check=False
+     
+            check=True
+            while check:  #quantity
                     try:
                         quant=int(input(f'\nHow much {self.food_name} do you want ? '))
-                        if quant>0 and quant <10 :
+                        if quant>0 and quant <=20 : #cannot order more than 20 quantity from the item
                             check=False
                     except:
                         print('\nPlease enter a valid quantity')
-                #adding the order to a dictionary        
-            self.order[self.food_name]=int(quant)
-            return self.confirm_1()
+                #adding the order to a dictionary 
+            if self.food_name in self.order:
+                 self.order[self.food_name]+=quant
+            else:            
+                self.order[self.food_name]=quant
+            return self.confirm_1() #first step in confirmation process
             
-        except:
-             print('\nunexpected error , please try again')
-             self.order={}
-             self.next_step()
+        
 
-
-    def confirm_1(self):
+    def confirm_1(self): #first stage of confirming order , the customer can choose whether to add items or move to the next step
 
         check=True
         while check:
@@ -72,28 +82,32 @@ class Customer(Order):
                         choice=int(input('\nWould you like anything else, or would you like to confirm your order?\n1-add to the order\n2-confirm it\n---> '))
                         if choice ==1 or choice ==2:
                             check=False
+                        else:
+                             print('Enter one of the given choices')
             except:
-                        print('\nPlease enter a valid input')
+                        print('\nChoose one of the given options')
 
-            try:
-                match choice :
+        
+        match choice :
                     
-                        case 1 :
-                            for i in global_menu:
-                                         print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
-                            self.order_meth()
-                        case 2:
-                            return self.confirm_order()
-            except:
-                print('\nUnexpected error, please try again')
-                return self.next_step()
+            case 1 :
+                for i in global_menu:
+                    print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
+                self.order_method()
+            case 2:
+                return self.confirm_order()
+            case _:
+                print('Please choose one of the given options')
+        
 
 
-    def confirm_order(self):
+    def confirm_order(self): # last stage of confirming order, the customer can choose whether to confirm it or reorder
+
+        #displaying the items entered by the customer
         print('--------------------------')
-        print(f'{'Items':<10} {'Quantity':>10}\n')
+        print(f"{'Items':<10} {'Quantity':>10}\n")
         for key,value in self.order.items():
-                print(f'{key:<10} {value:>10}')
+                print(f"{key:<10} {value:>10}")
         print('--------------------------')
        # confirming the order 
 
@@ -108,136 +122,143 @@ class Customer(Order):
 
         match confirmation :
             case 1:    
-                try:  #more info of the customer order
-                            if self.existing_table==False:
-                                check=True
-                                while check:
-                                    try:
-                                        self.table_number=int(input('\nEnter your table number \'1-20\': '))
-                                        if self.table_number >0 and self.table_number<=20:
-                                            check=False
-                                        else:
-                                            print('\nPlease enter a valid table number!')
-                                    except:
-                                        print('\nPlease enter a valid input')
-
-                                self.new_order = Order(self.table_number, self.order_id)
-                                global_orders.append(self.new_order)
-                except:
+                 #more info of the customer order
+                if self.existing_table==False:
+                    check=True
+                    while check:
+                        try:
+                            self.table_number=int(input('\nEnter your table number \'1-20\': '))
+                            if self.table_number >0 and self.table_number<=20:
+                                check=False
+                            else:
+                                print('\nPlease enter a valid table number!')
+                        except:
                             print('\nPlease enter a valid table number')
-                        
-                        #connecting  customer's order with the global Order list, so that the manager and the chef can access them
-                for key, quantity in self.order.items():
-                            for i in global_menu:
-                                if key.capitalize() == i.item_name:
-                                    for x in range(quantity):
-                                        self.new_order.items.append(i)
+
+                # connecting the new_order variable with the Order class and the global_orders list'which have all info of the order
+                    self.new_order = Order(self.table_number, self.order_id)
+                    global_orders.append(self.new_order)
+                
+                #connecting  customer's order with the global Order list, so that the manager and the chef can access them
+                #this part is for appending the items *quantity times in the global list so that the generate bill function from the Financial manager can work correctly and calculate the price of the item*quantity
+                for key, quantity in self.order.items(): 
+                #order is the dictionary with the ordered items from the customer
+                    for i in global_menu:
+                        if key == i.item_name:
+                            for x in range(quantity):
+                                self.new_order.items.append(i)
+                    
                                     
-                if self.existing_table:
+                if self.existing_table: #if existing table is not non that means that the user is adding items to their order
                             print('\nItems have been added to your order successfully!')
                 else:
                             print('\nYour order has been confirmed successfully!')
-                return self.next_step()
+            
+                            
+                manager.generate_bill(self.new_order)
+                self.next_step()     
+                
                 
             case 2:
                 print('\nLet\'s redo the order')
                 for i in global_menu:
                      print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
-                self.order={}
-                return self.order_meth()
+                self.order={} #so that it doesn't add the items with the old wrong order
+                return self.order_method()
 
                 
             
 
-    def add_to_order(self):
+    def add_to_order(self):   #used to add items to the customer order
 
         if self.did_c_order ==True:
-            if self.dept==None:
+            if self.dept==None: #customer didn't pay , so items will be added to the previous order
 
-                print('\n','Choose the items you want from our menu to add them to your order:')
-                for i in global_menu:
-                    print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
-                    #adding to the exisiting order
-                try:
-                            self.did_c_order=True
-                            check=True
-                            while check:
-                                try: 
-                                    self.food=int(input('\nEnter the id of the item you want: '))
-                                    if self.food >0 and self.food <= len(global_menu):
-                                        valid=True
-                                        while valid:
-                                                for i in global_menu:
-                                                    if self.food ==i.item_id:
-                                                        self.food_name=i.item_name
-                                                        check=False
-                                                        valid=False
-                                                        break
-                                                                    
-                    
-                                except:
-                                    print('\nPlease enter a valid id')
-                                
-                
-                        
-                            check=True
-                            while check:
-                                    try:
-                                        quant=int(input(f'\nHow much {self.food_name} do you want ? '))
-                                        if quant>0 and quant <10 :
-                                            check=False
-                                    except:
-                                        print('\nPlease enter a valid quantity')
-                                #adding the order to a dictionary
-             
-                            if self.food_name in self.order:
-                                self.order[self.food_name]+=quant
+                    print('\n','Choose the items you want from our menu to add them to your order:')
+                    for i in global_menu:
+                        print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
+                    #adding to the existing order
+                    check=True
+                    while check: #making the order with the id of the items
+                        try: 
+                            self.food=int(input('\nEnter the id of the item you want: '))
+                            if self.food >0 and self.food <= len(global_menu):
+                                check1=True #connecting the item id with the item name 
+                                while check1:
+                                    for i in global_menu:
+                                        if self.food ==i.item_id:
+                                            if i.availability==True:
+                                                check1=False
+                                                check=False
+                                                break
+                                            else:
+                                                print('This item is currently unavailable')
+                                                check1=False
+                                                break
                             else:
-                                 self.order[self.food_name]=quant
+                               print('\nplease enter a valid id')
+                        except:
+                            print('\nPlease enter a valid id')
+                    
+                    check=True #connecting the item id with the item name 
+                    while check:
+                        for i in global_menu:
+                            if self.food ==i.item_id:
+                                self.food_name=i.item_name
+                                check=False
+                         
+                    check=True
+                    while check:  #quantity
+                        try:
+                            quant=int(input(f'\nHow much {self.food_name} do you want ? '))
+                            if quant>0 and quant <=20 : #cannot order more than 20 quantity from the item
+                                check=False
+                        except:
+                            print('\nPlease enter a valid quantity')
+                                    #adding the order to a dictionary        
+                    
+               
+             
+                    if self.food_name in self.order: 
+                        self.order[self.food_name]+=quant
                                 
-                                      
+                    else:
+                         self.order[self.food_name]=quant
                                 
-            
-                            return self.confirm_1()
+                                
+                    return self.confirm_1()
                             
-                except:
-                             print('\nunexpected error , please try again')
-                             self.order={}
-                             self.next_step()
-            
+                
+ 
 
 
-
-            elif self.dept==True:
+            elif self.dept==True:  #customer already paid, so create a new order
                 print('\nChoose the items you want from our menu and place your order:')
                 for i in global_menu:
                     print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
-                self.validation=None
                 self.dept=None
                 self.order={}
                 self.existing_table=False
                 self.table_number=None
                 self.order_id=random.randint(1,100000)
-                self.order_meth() 
+                self.order_method() 
                  
-        elif self.did_c_order ==None:
+        elif self.did_c_order ==None: 
             print('\nYou don\'t have an order so you can add items to it')
             print('\n','Choose the items you want from our menu to create your order:')
             for i in global_menu:
                  print(f"({i.item_id:<1}){i.item_name:<10}:{i.price:>5} EGP")
-            self.order_meth()
+            self.order_method()
       
     #this function shows the user a set of options to choose from and decide what to do next
     def next_step(self):
-        check1=True
-        while check1:
+        check=True
+        while check:
             try:
                 option=int(input('\nChoose what you would like to do next\n1-show_bill\n2-pay_bill\n3-rate your experience\n4-Add items to your order\n5-exit\n--> '))
-                if option==1:
-                    self.validation=True
-
-                if option ==1 or option ==2 or option ==3 or option ==4 or option==5 or option==6:
-                    check1=False
+                
+                if option>=1 and option<=5:
+                    check=False
                 else:
                     print('please enter one of the given options')
             except:
@@ -245,17 +266,14 @@ class Customer(Order):
 
 
 
-            match option:
+        match option:  #return is to handle the recursive function calling
                 case 1:
                     self.show_bill()
                     return self.next_step()
                 case 2:
-                    if self.validation==True:
+                    
                         self.show_bill()
-                        self.pay_credit()
-                        return self.next_step()
-                    elif self.validation==None:
-                        print('\nSorry, you dont\'t have a bank account')
+                        self.pay()
                         return self.next_step()
                 case 3:
                     self.review()
@@ -264,59 +282,43 @@ class Customer(Order):
                 case 4:
                     self.existing_table=True
                     return self.add_to_order()
-                case 5:
-                    if self.dept==None:
-                         print('Sorry, you can\'t exit unless you pay for your order')
-                         self.show_bill()
-                         return self.next_step()
-                    elif self.dept== True:
-                        print('Have a good day!')
-                        return
+                case 5: 
+                        if self.dept==True:
+                            print('Have a good day!')
+                            return
+                        elif self.dept==None:
+                             print('You didn\'t pay for the order')
+                             self.pay()
+                             return self.next_step()
+                
 
 
-    def Dept(self):
-        try: 
-            if self.dept==None:
-                print('sorry you can\'t make a new order unless you pay for your last order')
-                self.show_bill()
-                self.next_step()
-            elif self.dept==True:
-                print('\nChoose the items you want from our menu and place your order:')
-                for i in global_menu:
-                     print(f"({i.item_id:<1}){i.item_name:<6}:{i.price:>5} EGP")
-                self.validation=None
-                self.dept=None
-                self.order={}
-                self.existing_table=False
-                self.table_number=None
-                self.order_id=random.randint(1,100000)
-                self.order_meth() 
-        except:
-            print('\nAn error occurred, please try again\n')
-
-
-
-
-
+   
     
     #taking the final value of the bill from the manager class after applying discounts 'if available'
     # NOTE_THAT generate_bill function is taken from the financial manager class
 
     
     def show_bill(self):
-        print('\n','-----------------Bill-----------------') 
-        print(f'{'items*quantity':<10}{'price':>10}\n') 
-        for key,value in self.order.items(): 
-            for item in global_menu: 
-                if key.capitalize() == item.item_name: 
-                    print(f'{key:<10}({value:<1}){value*item.price:>20}')
-        self.total_bill=manager.generate_bill(self.new_order) 
-        #storing the total value in a variable will be useful for the pay_credit method
-        print('\nTotal: ',self.total_bill)
-        print('---------------------------------------')
+        if self.dept==None: #customer didn't pay
+            print('\n','-----------------Bill-----------------') 
+            print(f'your order id: {self.order_id}')
+            print(f"{'items*quantity':<10}{'price':>20}\n") 
+            for key,value in self.order.items(): 
+                for item in global_menu: 
+                    if key.lower() == item.item_name.lower(): 
+                        print(f"{key:<10}({value:<2}){value*item.price:>20}")
+                        break
+            self.total_bill=manager.generate_bill(self.new_order) 
+            #storing the total value in a variable will be useful for the pay method
+            print('\nTotal: ',self.total_bill)
+            print('---------------------------------------')
+        elif self.dept==True: #they paid
+             print('You already paid for your order')
 
 
-    def review(self):
+
+    def review(self): # the customer cant choose to make a review unless he had already placed an order
         check=True
         if self.did_c_order==True:
 
@@ -348,42 +350,45 @@ class Customer(Order):
             print('You can\'t make a review unless you make an order first')
 
     #connected with the bank_account
-    def pay_credit(self):
-        try:    
+    def pay(self): # paying_credit method becomes optional 
+        if self.dept==True : #customer paid for the order
+            print('You already paid for your order')
+        elif self.dept==None: #customer didn't pay
+            check=True
+            while check:
+                try:
+                    choose=int(input('How would you like to pay\n1-credit\n2-cash\n---> '))
+                    if choose==1 or choose==2:
+                        check=False
+                    else:
+                         print('\nChoose one of the given options')
+                except:
+                    print('\nChoose one of the options')
+            try:  
+                match choose:
+                    case 1:
+                        account=BankAccount() 
+                        self.account=account
+                        if self.account.loginFrom_card():  #if the login occurred successfully it will return True
+                            if self.account.pay_credit(self.total_bill):
+                                  #if the pay_credit function occurred successfully it will return True
+                                  self.dept=True 
+                            else:
+                                 print('Process failed')
+                        else:
+                             print('Login failed')
+                            
+                    
+                    
+                    case 2:
+                        print('Payment received, thank you ')
+                        self.dept=True
+                    
+            except Exception as e:
+                print(e)
+             
 
-            if self.account.balance < self.total_bill :
-                print('you dont have enough money')
-            else:
-                self.dept=True
-                self.show_bill()
-                self.account.withdraw()
-                self.check_diff()
-        except:
-                    print('An error occurred ,please try again')
-                    self.next_step()
 
-    def check_diff(self):  #if the withdrawn amount is more then the bill
-                if self.account.withAmount > self.total_bill :
-                     change= self.account.withAmount - self.total_bill
-                     print(f'You paid more than the required amount, your change is {change}.')
-                     self.account.deposit()
-
-                     
-
-        
-
-    
-
-
-
-
-
-       
-
-#testing
-c1=Customer()
-# the add to order doesnt add to the order dictionary so the bill doesnt contain the new items
-# items quantity in confirm 1 is not printed , pay method has an error
 
 
 
