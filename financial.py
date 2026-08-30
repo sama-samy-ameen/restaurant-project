@@ -1,4 +1,4 @@
-
+from restaurant_common_data import Order,global_menu,global_orders
 class FinancialManager:
 
     def __init__(self):
@@ -100,69 +100,3 @@ class FinancialManager:
             print("Result: Break-even")
 
         print("======================================")
-def financial_menu(manager, global_orders):
-    while True:
-        print("\n========== Financial Manager ==========")
-        print("1. Add Expense")
-        print("2. Display Expenses")
-        print("3. Calculate Revenue")
-        print("4. Calculate Net Profit")
-        print("5. Financial Report")
-        print("6. Exit")
-
-        choice = input("Choose an option: ")
-
-        if choice == "1":
-            description = input("Enter expense description: ")
-            amount = float(input("Enter expense amount: "))
-
-            result = manager.add_expense(description, amount)
-
-            if result is not None:
-                print("Expense added successfully.")
-            else:
-                print("Invalid expense amount.")
-
-        elif choice == "2":
-            if not manager.expenses:
-                print("No expenses recorded.")
-            else:
-                print("\n========== Expenses ==========")
-
-                for expense in manager.expenses:
-                    print(f"Description: {expense['description']}")
-                    print(f"Amount: {expense['amount']:.2f}")
-                    print("------------------------------")
-
-        elif choice == "3":
-            print(
-                f"Total Revenue: "
-                f"{manager.calculate_revenue(global_orders):.2f}"
-            )
-
-        elif choice == "4":
-            print(
-                f"Net Profit: "
-                f"{manager.calculate_net_profit(global_orders):.2f}"
-            )
-
-        elif choice == "5":
-            manager.report(global_orders)
-
-        elif choice == "6":
-            print("Goodbye.")
-            break
-
-        else:
-            print("Invalid choice.")
-
-
-if __name__ == "__main__":
-    manager = FinancialManager()
-    global_orders = []
-
-<<<<<<< HEAD
-    financial_menu(manager, global_orders)
-=======
-    financial_menu(manager, global_orders)
->>>>>>> 1a4d4acc9ec38cb49b77512b536ae3e1bc840e39
